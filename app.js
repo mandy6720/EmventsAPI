@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 
-var events = [
+let events = [
   {id:1, title:"Title 1", description:"description 1", date:"04012017"},
   {id:2, title:"Title 2", description:"description 2", date:"04012017"},
   {id:3, title:"Title 3", description:"description 3", date:"04012017"}
@@ -13,40 +13,59 @@ app.use(bodyParser.json()); // for parsing application/json
 
 // Routes
 app.get('/events', (req, res) => {
-  res.json(events)
+  const p = Promise.resolve(events);
+  p.then(() => {
+    res.json(events);
+  }).catch(err => {res.send(err)})
 });
 
 app.get('/events/:id', (req, res) => {
-	var eventId = req.params.id;
-	var selectedEvent = events.filter((event) => {return event.id == eventId});
-	if (selectedEvent.length) {
-		res.send(selectedEvent);
-	}
-	res.status(404).send('Not found');
+	let eventId = req.params.id;
+	let selectedEvent = events.filter((event) => {return event.id == eventId});
+  let p = new Promise((resolve, reject) => {
+    if (selectedEvent.length) {
+      resolve(selectedEvent);
+    } else {
+      reject(404);
+    }
+  });
+
+	p.then((data) => {res.send(data)})
+  .catch((err)=>{res.status(err).send("Not Found")})
 });
 
 app.post('/events', (req, res) => {
-  var newEvent = {
+  let startingLength = events.length;
+  let newEvent = {
     id: req.body.id,
     title: req.body.title,
     description: req.body.description,
     date: req.body.date
   };
   events.push(newEvent);
-  res.send("Created!")
+  let endingLength = events.length;
+
+  let p = new Promise((resolve, reject) => {
+    if (startingLength != endingLength) {
+      resolve("Added");
+    } else {
+      reject(400);
+    }
+  });
+
+  p.then((data) => {res.send(data)})
+  .catch((err)=>{res.status(err).send("Bad Request")})
 });
 
 app.put('/events/:id', (req, res) => {
   const eventId = req.params.id
-
-  var newEvent = {
+  let newEvent = {
     id: req.body.id,
     title: req.body.title,
     description: req.body.description,
     date: req.body.date
   };
-
-  var found;
+  let found;
   events.forEach((item, index) => {
     if (item.id == req.body.id) {
       found = index;
@@ -65,7 +84,7 @@ app.put('/events/:id', (req, res) => {
 app.delete("/events/:id", (req,res) => {
   const eventId = req.params.id
 
-  var found;
+  let found;
   events.forEach((item, index) => {
     if (item.id == req.body.id) {
       found = index;
