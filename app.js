@@ -65,39 +65,56 @@ app.put('/events/:id', (req, res) => {
     description: req.body.description,
     date: req.body.date
   };
-  let found;
-  events.forEach((item, index) => {
-    if (item.id == req.body.id) {
-      found = index;
+
+  let p = new Promise((resolve, reject) => {
+    let found;
+    events.forEach((item, index) => {
+      if (item.id == req.body.id) {
+        found = index;
+      }
+    })
+
+    if (typeof found == "undefined") {
+      reject(404)
+    }else{
+      events[found] = newEvent
+      resolve("Updated!")
     }
+  });
+
+  p.then((data) => {
+    res.send(data)
   })
-
-  if (typeof found == "undefined") {
-    res.status(404).send("Not Found")
-    return
-  }
-
-  events[found] = newEvent
-  res.send("Updated!")
+  .catch(err => {
+    res.status(err).send("Not found")
+  })
 })
 
 app.delete("/events/:id", (req,res) => {
   const eventId = req.params.id
 
-  let found;
-  events.forEach((item, index) => {
-    if (item.id == req.body.id) {
-      found = index;
+  let p = new Promise((resolve, reject) => {
+    let found;
+    events.forEach((item, index) => {
+      if (item.id == req.body.id) {
+        found = index;
+      }
+    })
+
+    if (typeof found == "undefined") {
+      reject(404)
+    }else{
+      events.splice(found,1)
+      resolve("Deleted!")
     }
+  });
+
+  p.then((data) => {
+    res.send(data)
   })
-
-  if (typeof found == "undefined") {
-    res.status(404).send("Not Found")
-    return
-  }
-
-  events.splice(found,1)
-  res.send("Deleted!")
+  .catch(err => {
+    res.status(err).send("Not found")
+  })
 })
 
 app.listen(3000, () => {
