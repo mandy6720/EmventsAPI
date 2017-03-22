@@ -7,8 +7,8 @@ let events = [
   {id:3, title:"Tittle 3", description:"description 3", date:"04012017"}
 ]
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+app.get('/events', (req, res) => {
+  res.json(events)
 });
 
 app.post('/', (req, res) => {
