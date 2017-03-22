@@ -62,9 +62,24 @@ app.put('/events/:id', (req, res) => {
   res.send("Updated!")
 })
 
-app.post('/', (req, res) => {
-  res.send('Got a POST request')
-});
+app.delete("/events/:id", (req,res) => {
+  const eventId = req.params.id
+
+  var found;
+  events.forEach((item, index) => {
+    if (item.id == req.body.id) {
+      found = index;
+    }
+  })
+
+  if (typeof found == "undefined") {
+    res.status(404).send("Not Found")
+    return
+  }
+
+  events.splice(found,1)
+  res.send("Deleted!")
+})
 
 app.listen(3000, () => {
   console.log('Example app listening on port 3000!')
