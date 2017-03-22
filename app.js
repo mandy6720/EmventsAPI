@@ -36,6 +36,32 @@ app.post('/events', (req, res) => {
   res.send("Created!")
 });
 
+app.put('/events/:id', (req, res) => {
+  const eventId = req.params.id
+
+  var newEvent = {
+    id: req.body.id,
+    title: req.body.title,
+    description: req.body.description,
+    date: req.body.date
+  };
+
+  var found;
+  events.forEach((item, index) => {
+    if (item.id == req.body.id) {
+      found = index;
+    }
+  })
+
+  if (typeof found == "undefined") {
+    res.status(404).send("Not Found")
+    return
+  }
+
+  events[found] = newEvent
+  res.send("Updated!")
+})
+
 app.post('/', (req, res) => {
   res.send('Got a POST request')
 });
