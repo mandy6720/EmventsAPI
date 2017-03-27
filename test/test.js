@@ -104,4 +104,34 @@ describe("This is CRUD of Events", () => {
     });
   });
 
+  //Test DELETE an Event
+  describe("DELETE /events/:id", () => {
+
+    it("delete an existing event", (done) => {
+      chai.request(server)
+        .delete('/events/2')
+        .end((err, res) => {
+          res.should.have.status(200)
+          res.body.should.be.a('object');
+          res.body.should.have.property('message').eql('Deleted!');
+          res.body.data.length.should.be.eql(3); // because we posted one in an earlier test
+          done()
+        })
+    });
+  });
+
+  //Test DELETE an Event (FAIL)
+  describe("DELETE /events/:id fails when id does not exist", () => {
+
+    it("delete an existing event", (done) => {
+      chai.request(server)
+        .delete('/events/26')
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.message.should.be.eql('Not found');
+          done()
+        })
+    });
+  });
+
 });
