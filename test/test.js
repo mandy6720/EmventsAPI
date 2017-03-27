@@ -23,7 +23,7 @@ describe("This is CRUD of Events", () => {
   });
 
   // Test /GET by id
-  describe("GET / event by id", () => {
+  describe("GET /events/:id", () => {
 
     it("returns one event", (done) => {
       chai.request(server)
@@ -32,6 +32,29 @@ describe("This is CRUD of Events", () => {
           res.should.have.status(200)
           res.body.should.be.a('array')
           res.body.length.should.be.eql(1)
+          done()
+        })
+    });
+
+  });
+
+  // Test /POST 
+  describe("POST to /events", () => {
+
+    it("posts a new event", (done) => {
+      let newEvent = {
+        id: 7,
+        title: 'test event',
+        description: 'test',
+        date: '03262017'
+      };
+      chai.request(server)
+        .post('/events')
+        .send(newEvent) 
+        .end((err, res) => {
+          res.should.have.status(200)
+          res.body.should.be.a('object');
+          res.body.message.should.be.eql("Added");
           done()
         })
     });

@@ -47,7 +47,7 @@ app.post('/events', (req, res) => {
 
   let p = new Promise((resolve, reject) => {
     if (startingLength != endingLength) {
-      resolve("Added");
+      resolve({message:"Added"});
     } else {
       reject(400);
     }
