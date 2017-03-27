@@ -78,6 +78,7 @@ describe("This is CRUD of Events", () => {
           res.should.have.status(200)
           res.body.should.be.a('object');
           res.body.message.should.be.eql("Updated!");
+          res.body.data.date.should.be.eql("03262017");
           done()
         })
     });
