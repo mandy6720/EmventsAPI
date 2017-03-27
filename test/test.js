@@ -38,7 +38,7 @@ describe("This is CRUD of Events", () => {
 
   });
 
-  // Test /POST 
+  // Test /POST
   describe("POST to /events", () => {
 
     it("posts a new event", (done) => {
@@ -50,7 +50,7 @@ describe("This is CRUD of Events", () => {
       };
       chai.request(server)
         .post('/events')
-        .send(newEvent) 
+        .send(newEvent)
         .end((err, res) => {
           res.should.have.status(200)
           res.body.should.be.a('object');
@@ -60,4 +60,47 @@ describe("This is CRUD of Events", () => {
     });
 
   });
+
+  //Test Update Event
+  describe("PUT to /events/:id", () => {
+
+    it("update a existing event", (done) => {
+      let newEvent = {
+        id: 1,
+        title: 'test event',
+        description: 'test',
+        date: '03262017'
+      };
+      chai.request(server)
+        .put('/events/1')
+        .send(newEvent)
+        .end((err, res) => {
+          res.should.have.status(200)
+          res.body.should.be.a('object');
+          res.body.message.should.be.eql("Updated!");
+          done()
+        })
+    });
+  });
+
+  //Test Fail Update Event
+  describe("PUT to /events/:id with unexisting id", () => {
+
+    it("update a unexisting event", (done) => {
+      let newEvent = {
+        id: 100,
+        title: 'test event',
+        description: 'test',
+        date: '03262017'
+      };
+      chai.request(server)
+        .put('/events/7')
+        .send(newEvent)
+        .end((err, res) => {
+          res.should.have.status(404)
+          done()
+        })
+    });
+  });
+
 });

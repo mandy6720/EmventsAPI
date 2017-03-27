@@ -78,7 +78,7 @@ app.put('/events/:id', (req, res) => {
       reject(404)
     }else{
       events[found] = newEvent
-      resolve("Updated!")
+      resolve({message:"Updated!"})
     }
   });
 
