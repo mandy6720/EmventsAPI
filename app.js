@@ -40,7 +40,7 @@ const getEvent = (eventId, db, callback, errCb) => {
   // Get the documents collection
   let collection = db.collection('events');
   // Insert some documents
-  let objectId = new mongo.ObjectId(eventId)
+  let objectId = new mongo.ObjectId(eventId);
   collection.findOne({'_id': objectId}, (err, event) =>  {
     if (err) {
       errCb(err);
@@ -50,6 +50,22 @@ const getEvent = (eventId, db, callback, errCb) => {
     }
   });
 };
+
+const updateEvent = function(eventId, data, db, callback, errCb) {
+  // Get the events collection
+  let collection = db.collection('events');
+  let objectId = new mongo.ObjectId(eventId);
+  // Update document where a is 2, set b equal to 1
+  collection.updateOne({ '_id' : objectId }
+    , { $set: { title : data.title, description: data.description,
+    date: data.date} }, function(err, result) {
+    if (err) {
+      errCb(err);
+    } else {
+      callback(result);
+    }
+  });
+}
 
 
 // Middleware
@@ -110,34 +126,23 @@ app.post('/events', (req, res) => {
 app.put('/events/:id', (req, res) => {
   const eventId = req.params.id
   let newEvent = {
-    id: req.body.id,
     title: req.body.title,
     description: req.body.description,
     date: req.body.date
   };
 
-  let p = new Promise((resolve, reject) => {
-    let found;
-    events.forEach((item, index) => {
-      if (item.id == req.body.id) {
-        found = index;
-      }
-    })
-
-    if (typeof found == "undefined") {
-      reject(404)
-    }else{
-      events[found] = newEvent
-      resolve({message:"Updated!", data: events[found]})
-    }
+  // Connect to Mongo
+  MongoClient.connect(url, (err, db) => {
+    assert.equal(null, err);
+    console.log("Connected successfully to Mongo");
+    updateEvent(eventId, newEvent, db, (result) => {
+      res.status(200).send({message: "Event successfully updated!"});
+      db.close();
+    }, (err) => {
+      res.status(400).send(err);
+    });
   });
 
-  p.then((data) => {
-    res.send(data)
-  })
-  .catch(err => {
-    res.status(err).send("Not found")
-  })
 })
 
 app.delete("/events/:id", (req,res) => {
