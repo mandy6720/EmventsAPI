@@ -10,7 +10,7 @@ const url = 'mongodb://localhost:27017/emvents';
 
 const insertEvent = (data, db, callback, errCb) => {
   // Get the documents collection
-  let collection = db.collection('documents');
+  let collection = db.collection('events');
   // Insert some documents
   collection.insertOne(data, (err, result) => {
     if (err) {
@@ -22,6 +22,21 @@ const insertEvent = (data, db, callback, errCb) => {
   });
 };
 
+const getAllEvents = (db, callback, errCb) => {
+  // Get the documents collection
+  let collection = db.collection('events');
+  // Insert some documents
+  collection.find({}).toArray((err, events) => {
+    if (err) {
+      errCb(err);
+    } else {
+      console.log("Found events!");
+      callback(events);
+    }
+  });
+};
+
+
 // Middleware
 app.use(bodyParser.json()); // for parsing application/json
 
@@ -32,13 +47,14 @@ app.get('/events', (req, res) => {
   MongoClient.connect(url, (err, db) => {
     assert.equal(null, err);
     console.log("Connected successfully to Mongo");
-    // find all events
-    //return all events as Promise
+    getAllEvents(db, (events) => {
+      res.status(200).send(events);
+      db.close();
+    }, (err) => {
+      res.status(404).send(err);
+      db.close();
+    });
   });
-  const p = Promise.resolve(events);
-  p.then(() => {
-    res.json(events);
-  }).catch(err => {res.send(err)})
 });
 
 app.get('/events/:id', (req, res) => {
