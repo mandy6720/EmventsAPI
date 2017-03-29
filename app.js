@@ -47,7 +47,7 @@ app.post('/events', (req, res) => {
 
   let p = new Promise((resolve, reject) => {
     if (startingLength != endingLength) {
-      resolve("Added");
+      resolve({message:"Added"});
     } else {
       reject(400);
     }
@@ -78,7 +78,7 @@ app.put('/events/:id', (req, res) => {
       reject(404)
     }else{
       events[found] = newEvent
-      resolve("Updated!")
+      resolve({message:"Updated!", data: events[found]})
     }
   });
 
@@ -96,7 +96,7 @@ app.delete("/events/:id", (req,res) => {
   let p = new Promise((resolve, reject) => {
     let found;
     events.forEach((item, index) => {
-      if (item.id == req.body.id) {
+      if (item.id == eventId) {
         found = index;
       }
     })
@@ -105,7 +105,7 @@ app.delete("/events/:id", (req,res) => {
       reject(404)
     }else{
       events.splice(found,1)
-      resolve("Deleted!")
+      resolve({message: "Deleted!", data: events})
     }
   });
 
@@ -113,10 +113,12 @@ app.delete("/events/:id", (req,res) => {
     res.send(data)
   })
   .catch(err => {
-    res.status(err).send("Not found")
+    res.status(err).send({message: "Not found"})
   })
 })
 
 app.listen(3000, () => {
   console.log('Example app listening on port 3000!')
 });
+
+module.exports = app

@@ -4,7 +4,8 @@
   "description": "This is an API side for mobile ticketing app of Emvents Inc., a (fictional) tech company based in South Africa, aiming to help people find the best free events in Africa and help organizers reach millions of potential attendees.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -19,5 +20,10 @@
   "dependencies": {
     "body-parser": "^1.17.1",
     "express": "^4.15.2"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "mocha": "^3.2.0"
   }
 }
