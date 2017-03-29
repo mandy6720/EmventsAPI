@@ -58,7 +58,7 @@ const updateEvent = function(eventId, data, db, callback, errCb) {
   // Update document where a is 2, set b equal to 1
   collection.updateOne({ '_id' : objectId }
     , { $set: { title : data.title, description: data.description,
-    date: data.date} }, function(err, result) {
+    date: data.date} }, (err, result) => {
     if (err) {
       errCb(err);
     } else {
@@ -67,6 +67,19 @@ const updateEvent = function(eventId, data, db, callback, errCb) {
   });
 }
 
+const removeEvent = (eventId, db, callback, errCb) => {
+  // Get the documents collection
+  let collection = db.collection('events');
+  let objectId = new mongo.ObjectId(eventId);
+  // Delete document where a is 3
+  collection.deleteOne({ _id : objectId }, (err, result) => {
+    if (err) {
+      errCb(err);
+    } else {
+      callback(result);
+    }
+  });
+}
 
 // Middleware
 app.use(bodyParser.json()); // for parsing application/json
@@ -148,28 +161,17 @@ app.put('/events/:id', (req, res) => {
 app.delete("/events/:id", (req,res) => {
   const eventId = req.params.id
 
-  let p = new Promise((resolve, reject) => {
-    let found;
-    events.forEach((item, index) => {
-      if (item.id == eventId) {
-        found = index;
-      }
-    })
-
-    if (typeof found == "undefined") {
-      reject(404)
-    }else{
-      events.splice(found,1)
-      resolve({message: "Deleted!", data: events})
-    }
+  // Connect to Mongo
+  MongoClient.connect(url, (err, db) => {
+    assert.equal(null, err);
+    console.log("Connected successfully to Mongo");
+    removeEvent(eventId, db, (result) => {
+      res.status(200).send({message: "Event successfully deleted!"});
+      db.close();
+    }, (err) => {
+      res.status(400).send(err);
+    });
   });
-
-  p.then((data) => {
-    res.send(data)
-  })
-  .catch(err => {
-    res.status(err).send({message: "Not found"})
-  })
 })
 
 app.listen(3000, () => {
