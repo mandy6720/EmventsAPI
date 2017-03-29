@@ -2,17 +2,39 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 
-let events = [
-  {id:1, title:"Title 1", description:"description 1", date:"04012017"},
-  {id:2, title:"Title 2", description:"description 2", date:"04012017"},
-  {id:3, title:"Title 3", description:"description 3", date:"04012017"}
-];
+const MongoClient = require('mongodb').MongoClient
+  , assert = require('assert');
+
+// Connection URL
+const url = 'mongodb://localhost:27017/emvents';
+
+const insertEvent = (data, db, callback, errCb) => {
+  // Get the documents collection
+  let collection = db.collection('documents');
+  // Insert some documents
+  collection.insertOne(data, (err, result) => {
+    if (err) {
+      errCb(err);
+    } else {
+      console.log("Successfully inserted event!");
+      callback(result);
+    }
+  });
+};
 
 // Middleware
 app.use(bodyParser.json()); // for parsing application/json
 
 // Routes
 app.get('/events', (req, res) => {
+  // connect to Mongo
+  // Use connect method to connect to the server
+  MongoClient.connect(url, (err, db) => {
+    assert.equal(null, err);
+    console.log("Connected successfully to Mongo");
+    // find all events
+    //return all events as Promise
+  });
   const p = Promise.resolve(events);
   p.then(() => {
     res.json(events);
@@ -35,26 +57,22 @@ app.get('/events/:id', (req, res) => {
 });
 
 app.post('/events', (req, res) => {
-  let startingLength = events.length;
   let newEvent = {
-    id: req.body.id,
     title: req.body.title,
     description: req.body.description,
     date: req.body.date
   };
-  events.push(newEvent);
-  let endingLength = events.length;
-
-  let p = new Promise((resolve, reject) => {
-    if (startingLength != endingLength) {
-      resolve({message:"Added"});
-    } else {
-      reject(400);
-    }
+  // Connect to Mongo
+  MongoClient.connect(url, (err, db) => {
+    assert.equal(null, err);
+    console.log("Connected successfully to Mongo");
+    insertEvent(newEvent, db, function(result) {
+      res.status(200).send({message: "Event successfully added!"});
+      db.close();
+    }, (err) => {
+      res.status(400).send(err);
+    });
   });
-
-  p.then((data) => {res.send(data)})
-  .catch((err)=>{res.status(err).send("Bad Request")})
 });
 
 app.put('/events/:id', (req, res) => {
