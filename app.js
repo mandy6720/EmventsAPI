@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-
+const mongo = require('mongodb')
 const MongoClient = require('mongodb').MongoClient
   , assert = require('assert');
 
@@ -36,6 +36,21 @@ const getAllEvents = (db, callback, errCb) => {
   });
 };
 
+const getEvent = (eventId, db, callback, errCb) => {
+  // Get the documents collection
+  let collection = db.collection('events');
+  // Insert some documents
+  let objectId = new mongo.ObjectId(eventId)
+  collection.findOne({'_id': objectId}, (err, event) =>  {
+    if (err) {
+      errCb(err);
+    } else {
+      console.log("Found event!");
+      callback(event);
+    }
+  });
+};
+
 
 // Middleware
 app.use(bodyParser.json()); // for parsing application/json
@@ -47,8 +62,8 @@ app.get('/events', (req, res) => {
   MongoClient.connect(url, (err, db) => {
     assert.equal(null, err);
     console.log("Connected successfully to Mongo");
-    getAllEvents(db, (events) => {
-      res.status(200).send(events);
+    getAllEvents(db, (event) => {
+      res.status(200).send(event);
       db.close();
     }, (err) => {
       res.status(404).send(err);
@@ -59,17 +74,18 @@ app.get('/events', (req, res) => {
 
 app.get('/events/:id', (req, res) => {
 	let eventId = req.params.id;
-	let selectedEvent = events.filter((event) => {return event.id == eventId});
-  let p = new Promise((resolve, reject) => {
-    if (selectedEvent.length) {
-      resolve(selectedEvent);
-    } else {
-      reject(404);
-    }
-  });
 
-	p.then((data) => {res.send(data)})
-  .catch((err)=>{res.status(err).send("Not Found")})
+  MongoClient.connect(url, (err, db) => {
+    assert.equal(null, err);
+    console.log("Connected successfully to Mongo");
+    getEvent(eventId, db, (event) => {
+      res.status(200).send(event);
+      db.close();
+    }, (err) => {
+      res.status(404).send(err);
+      db.close();
+    });
+  });
 });
 
 app.post('/events', (req, res) => {
