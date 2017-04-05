@@ -26,7 +26,7 @@ app.put('/events/:id', EventRoute.updateEvent)
 
 app.delete("/events/:id", EventRoute.deleteEvent)
 
-app.listen(3000, () => {
+app.listen(3010, () => {
   console.log('Example app listening on port 3000!')
 });
 
