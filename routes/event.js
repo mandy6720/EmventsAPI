@@ -4,24 +4,33 @@ const Event = require('../models/event')
 function getAllEvents(req, res) {
   Event.find({}, (err, events) => {
 
-    if (err) res.status(404).send(err)
-    res.status(200).send(events)
+    if (err) {
+      res.status(404).send(err)
+    } else {
+      res.status(200).send(events)
+    }
   })
 }
 
 function getOneEventById(req, res) {
 	let eventId = req.params.id;
   Event.findById({_id: eventId}, (err, event) => {
-    if (err) res.status(404).send(err)
-    res.status(200).send(event)
+    if (err) {
+      res.status(404).send(err)
+    } else {
+      res.status(200).send(event)
+    }
   })
 }
 
 function createEvent(req, res) {
   let newEvent = new Event(req.body)
   newEvent.save((err,event) => {
-    if (err) res.status(400).send(err)
-    res.status(200).send({ message: 'Created!', event })
+    if (err) {
+      res.status(400).send(err)
+    } else {
+      res.status(200).send({ message: 'Created!', event })
+    }
   })
 }
 
@@ -29,11 +38,14 @@ function updateEvent(req, res) {
   const eventId = req.params.id
 
   Event.findById({_id: eventId}, (err, event) => {
-        if(err) res.send(err);
-        Object.assign(event, req.body).save((err, event) => {
-            if(err) res.send(err);
-            res.json({ message: 'Updated!', event });
-        });
+        if(err) {
+          res.send(err);
+        } else {
+          Object.assign(event, req.body).save((err, event) => {
+              if(err) res.send(err);
+              res.json({ message: 'Updated!', event });
+          });
+        }
     });
 }
 
@@ -41,8 +53,11 @@ function deleteEvent(req,res) {
   const eventId = req.params.id
 
   Event.remove({_id: eventId}, (err) => {
-    if (err) res.send(err)
-    res.json({message: 'Deleted'})
+    if (err) {
+      res.send(err)
+    } else {
+      res.json({message: 'Deleted'})
+    }
   })
 }
 
