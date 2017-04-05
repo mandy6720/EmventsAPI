@@ -39,7 +39,7 @@ function updateEvent(req, res) {
 
   Event.findById({_id: eventId}, (err, event) => {
         if(err) {
-          res.send(err);
+          res.status(404).send(err);
         } else {
           Object.assign(event, req.body).save((err, event) => {
               if(err) res.send(err);
@@ -54,7 +54,7 @@ function deleteEvent(req,res) {
 
   Event.remove({_id: eventId}, (err) => {
     if (err) {
-      res.send(err)
+      res.status(404).send(err)
     } else {
       res.json({message: 'Deleted'})
     }
