@@ -57,6 +57,34 @@ describe("This is CRUD of Events", () => {
 
   });
 
+  // Test /GET by title
+  describe("GET /events/search", () => {
+
+    it("returns matching events", (done) => {
+      let event1 = new Event({ title: "Test Event 1", description: "123", date: new Date()});
+      let event2 = new Event({ title: "Test Event 2", description: "456", date: new Date()});
+      event1.save((err, event) => {
+          chai.request(server)
+          .get('/events/' + event.id)
+          .send(event)
+          .end((err, res) => {
+            event2.save((err, event) => {
+              chai.request(server)
+              .get('/events/search?title=1')
+              .send(event)
+              .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+                res.body.length.should.be.eql(1);
+                done();
+              });
+            });
+          });
+      });
+    });
+
+  });
+
   // Test /POST
   describe("POST to /events", () => {
 
