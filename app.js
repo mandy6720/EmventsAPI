@@ -3,9 +3,10 @@ const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
 const EventRoute = require('./routes/event')
+const config = require('config')
 
 // Connection URL
-const url = 'mongodb://localhost:27017/emvents';
+const url = config.DBHost;
 
 // Connectect to DB
 mongoose.connect(url)
