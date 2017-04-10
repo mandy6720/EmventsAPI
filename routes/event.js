@@ -32,13 +32,6 @@ function getOneEventByTitle(req, res) {
       res.status(200).send(docs)
     }
   });
-  // Event.findById({_id: eventId}, (err, event) => {
-  //   if (err) {
-  //     res.status(404).send(err)
-  //   } else {
-  //     res.status(200).send(event)
-  //   }
-  // })
 }
 
 function createEvent(req, res) {
