@@ -23,6 +23,24 @@ function getOneEventById(req, res) {
   })
 }
 
+function getOneEventByTitle(req, res) {
+	let query = req.query.title;
+  Event.find({'title' : new RegExp(query, 'i')}, function(err, docs){
+    if (err) {
+      res.status(404).send(err)
+    } else {
+      res.status(200).send(docs)
+    }
+  });
+  // Event.findById({_id: eventId}, (err, event) => {
+  //   if (err) {
+  //     res.status(404).send(err)
+  //   } else {
+  //     res.status(200).send(event)
+  //   }
+  // })
+}
+
 function createEvent(req, res) {
   let newEvent = new Event(req.body)
   newEvent.save((err,event) => {
@@ -61,4 +79,4 @@ function deleteEvent(req,res) {
   })
 }
 
-module.exports = { getAllEvents, getOneEventById, createEvent, updateEvent, deleteEvent }
+module.exports = { getAllEvents, getOneEventById, getOneEventByTitle, createEvent, updateEvent, deleteEvent }

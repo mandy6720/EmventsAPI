@@ -19,6 +19,8 @@ app.use(bodyParser.json()); // for parsing application/json
 // Routes
 app.get('/events', EventRoute.getAllEvents);
 
+app.get('/events/search', EventRoute.getOneEventByTitle);
+
 app.get('/events/:id', EventRoute.getOneEventById);
 
 app.post('/events', EventRoute.createEvent);
