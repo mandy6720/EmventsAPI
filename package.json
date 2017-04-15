@@ -4,7 +4,7 @@
   "description": "This is an API side for mobile ticketing app of Emvents Inc., a (fictional) tech company based in South Africa, aiming to help people find the best free events in Africa and help organizers reach millions of potential attendees.",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "export NODE_ENV=dev && nodemon app.js",
     "test": "mocha"
   },
   "repository": {
@@ -19,7 +19,11 @@
   "homepage": "https://github.com/nucauthu/EmventsAPI#readme",
   "dependencies": {
     "body-parser": "^1.17.1",
-    "express": "^4.15.2"
+    "config": "^1.25.1",
+    "express": "^4.15.2",
+    "mongodb": "^2.2.25",
+    "mongoose": "^4.9.3",
+    "nodemon": "^1.11.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
