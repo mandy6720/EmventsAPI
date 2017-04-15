@@ -119,15 +119,18 @@ describe("This is CRUD of Events", () => {
         description: 'test',
         date: new Date()
       })
+      let newTitle = "test event updated"
+      let newDescription = "new description"
       newEvent.save((err, event) => {
         chai.request(server)
         .put('/events/' + event.id)
-        .send({title: "test event updated", description: "new description", date: event.date})
+        .send({title: newTitle, description: newDescription, date: event.date})
         .end((err, res) => {
             res.should.have.status(200);
             res.body.should.be.a('object');
             res.body.should.have.property('message').eql('Updated!');
-            res.body.event.should.have.property('title').eql('test event updated');
+            res.body.event.should.have.property('title').eql(newTitle);
+            res.body.event.should.have.property('description').eql(newDescription);
           done();
         });
       });
