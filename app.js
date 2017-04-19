@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
+const acl = require('acl')
 const EventRoute = require('./routes/event')
 const config = require('config')
 const passport = require('passport')
@@ -15,6 +16,12 @@ const url = config.DBHost;
 mongoose.connect(url)
 let db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error'))
+
+db.on('connected', function(error){
+    if (error) throw error;
+    //you must set up the db when mongoose is connected or your will not be able to write any document into it
+    acl = new acl(new acl.mongodbBackend(mongoose.connection.db, 'acl_'));
+});
 
 // Middleware
 app.use(bodyParser.json()); // for parsing application/json
