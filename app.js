@@ -3,7 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
 var acl = require('acl')
-const EventRoute = require('./routes/event')
+const EventRoute = require('./routes/event');
+const UserRoute = require('./routes/users');
 const config = require('config')
 const passport = require('passport')
 const Strategy = require('passport-http').BasicStrategy
@@ -79,6 +80,11 @@ app.delete("/events/:id",
 passport.authenticate('basic', { session: false }),
 EventRoute.checkAuthorized,
 EventRoute.deleteEvent);
+
+// User routes
+app.get('/users',
+passport.authenticate('basic', { session: false }),
+UserRoute.getAllUsers);
 
 app.listen(3010, () => {
   console.log('Example app listening on port 3010!')

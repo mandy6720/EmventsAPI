@@ -10,7 +10,7 @@ function getAllEvents(req, res) {
     } else {
       res.status(200).send(events)
     }
-  })
+  });
 }
 
 function getAllEventsByUser(req, res) {
@@ -32,7 +32,7 @@ function getOneEventById(req, res) {
     } else {
       res.status(200).send(event)
     }
-  })
+  });
 }
 
 function getOneEventByTitle(req, res) {
@@ -57,7 +57,7 @@ function createEvent(req, res) {
     } else {
       res.status(200).send({ message: 'Created!', event })
     }
-  })
+  });
 }
 
 function updateEvent(req, res) {
@@ -101,7 +101,7 @@ function deleteEvent(req,res) {
     } else {
       res.json({message: 'Deleted'})
     }
-  })
+  });
 }
 
 function checkAuthorized(req, res, next) {
@@ -115,7 +115,8 @@ function checkAuthorized(req, res, next) {
     }else{
       res.status(401).send("Unauthorized")
     }
-  })
+  });
 }
 
-module.exports = { getAllEvents, getAllEventsByUser, getOneEventById, getOneEventByTitle, createEvent, updateEvent, rsvpToEvent, deleteEvent, checkAuthorized }
+module.exports = { getAllEvents, getAllEventsByUser, getOneEventById, getOneEventByTitle, 
+  createEvent, updateEvent, rsvpToEvent, deleteEvent, checkAuthorized }
