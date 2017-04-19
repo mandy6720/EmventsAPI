@@ -72,7 +72,7 @@ passport.authenticate('basic', { session: false }),
 EventRoute.checkAuthorized,
 EventRoute.updateEvent);
 
-app.put('/events/:id/rsvp',
+app.post('/events/:id/rsvp',
 passport.authenticate('basic', { session: false }),
 EventRoute.rsvpToEvent);
 
@@ -82,7 +82,14 @@ EventRoute.checkAuthorized,
 EventRoute.deleteEvent);
 
 // User routes
-app.get('/users',
+
+//returns all the upcoming events a user has signed up for
+app.get('/users/:userId/events',
+passport.authenticate('basic', { session: false }),
+UserRoute.getAllEventsRegistedByUser);
+
+//return all users
+app.get('/users/events',
 passport.authenticate('basic', { session: false }),
 UserRoute.getAllUsers);
 
