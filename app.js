@@ -69,12 +69,16 @@ EventRoute.createEvent);
 app.put('/events/:id',
 passport.authenticate('basic', { session: false }),
 EventRoute.checkAuthorized,
-EventRoute.updateEvent)
+EventRoute.updateEvent);
+
+app.put('/events/:id/rsvp',
+passport.authenticate('basic', { session: false }),
+EventRoute.rsvpToEvent);
 
 app.delete("/events/:id",
 passport.authenticate('basic', { session: false }),
 EventRoute.checkAuthorized,
-EventRoute.deleteEvent)
+EventRoute.deleteEvent);
 
 app.listen(3010, () => {
   console.log('Example app listening on port 3010!')
