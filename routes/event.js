@@ -77,13 +77,13 @@ function updateEvent(req, res) {
 
 function rsvpToEvent(req, res) {
   const eventId = req.params.id;
-  let userObj = new User(req.user);
+  let userId = req.user.id
   Event.findById({_id: eventId}, (err, event) => {
         if(err) {
           res.status(404).send(err);
         } else {
           let newEvent = event;
-          newEvent.rsvp.push(userObj);
+          newEvent.rsvp.push(userId);
           Object.assign(event, newEvent).save((err, event) => {
               if(err) res.send(err);
               res.send({ message: 'Updated!', event });
