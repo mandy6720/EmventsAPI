@@ -50,6 +50,10 @@ app.get('/events',
 passport.authenticate('basic', { session: false }),
 EventRoute.getAllEvents);
 
+app.get('/events/user/:userId',
+passport.authenticate('basic', { session: false }),
+EventRoute.getAllEventsByUser);
+
 app.get('/events/search',
 passport.authenticate('basic', { session: false }),
 EventRoute.getOneEventByTitle);

@@ -12,6 +12,17 @@ function getAllEvents(req, res) {
   })
 }
 
+function getAllEventsByUser(req, res) {
+  let userId = req.params.userId;
+  Event.find({'created_by': userId}, (err, events) => {
+    if (err) {
+      res.status(404).send(err)
+    } else {
+      res.status(200).send(events)
+    }
+  });
+}
+
 function getOneEventById(req, res) {
 	let eventId = req.params.id;
   Event.findById({_id: eventId}, (err, event) => {
@@ -89,4 +100,4 @@ function checkAuthorized(req, res, next) {
   })
 }
 
-module.exports = { getAllEvents, getOneEventById, getOneEventByTitle, createEvent, updateEvent, deleteEvent, checkAuthorized }
+module.exports = { getAllEvents, getAllEventsByUser, getOneEventById, getOneEventByTitle, createEvent, updateEvent, deleteEvent, checkAuthorized }
