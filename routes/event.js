@@ -35,7 +35,10 @@ function getOneEventByTitle(req, res) {
 }
 
 function createEvent(req, res) {
+  let userId = req.user.id
+  req.body.created_by = userId
   let newEvent = new Event(req.body)
+
   newEvent.save((err,event) => {
     if (err) {
       res.status(400).send(err)
@@ -72,4 +75,18 @@ function deleteEvent(req,res) {
   })
 }
 
-module.exports = { getAllEvents, getOneEventById, getOneEventByTitle, createEvent, updateEvent, deleteEvent }
+function checkAuthorized(req, res, next) {
+  let userId = req.user.id
+  let eventId = req.params.id
+
+  Event.findOne({_id: eventId}, (err, event)=> {
+    if (err) res.status(400)
+    if (event.created_by == userId) {
+      next()
+    }else{
+      res.status(401).send("Unauthorized")
+    }
+  })
+}
+
+module.exports = { getAllEvents, getOneEventById, getOneEventByTitle, createEvent, updateEvent, deleteEvent, checkAuthorized }

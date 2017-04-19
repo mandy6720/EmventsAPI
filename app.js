@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
-const acl = require('acl')
+var acl = require('acl')
 const EventRoute = require('./routes/event')
 const config = require('config')
 const passport = require('passport')
@@ -64,10 +64,12 @@ EventRoute.createEvent);
 
 app.put('/events/:id',
 passport.authenticate('basic', { session: false }),
+EventRoute.checkAuthorized,
 EventRoute.updateEvent)
 
 app.delete("/events/:id",
 passport.authenticate('basic', { session: false }),
+EventRoute.checkAuthorized,
 EventRoute.deleteEvent)
 
 app.listen(3010, () => {
