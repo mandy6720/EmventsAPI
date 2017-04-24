@@ -10,6 +10,8 @@ let Event = require('../models/event');
 let User = require('../models/user.js');
 let Reservation = require('../models/reservation');
 
+let moment = require('moment');
+
 
 chai.use(chaiHttp);
 
@@ -289,4 +291,37 @@ describe("This is CRUD of Events", () => {
       })
     })
   })
+
+  describe("Get all events registered for", () => {
+    it('gets all events user is registered for', (done) => {
+      user.save((err, user) => {});
+
+      let newEvent = new Event({
+        title: 'test event',
+        description: 'test',
+        date: moment().add(7, 'd'),
+        created_by: user.id
+      });
+
+      newEvent.save((err, event) => {
+        let newRegistration = new Reservation()
+        newRegistration.user_id = user.id
+        newRegistration.event_id = event.id
+
+        newRegistration.save((err, registration)=> {
+          chai.request(server)
+          .get("/users/"+user.id+"/events")
+          .auth(user.username, user.password)
+          .end((err, res) => {
+              res.should.have.status(200);
+              res.body.should.be.a('array');
+              res.body.length.should.be.eql(1);
+            done();
+          });
+        })
+      })
+      
+    })
+  })
+
 });
