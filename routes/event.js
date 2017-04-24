@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Event = require('../models/event');
 const User = require('../models/user');
+const Reservation = require('../models/reservation')
 
 function getAllEvents(req, res) {
   Event.find({}, (err, events) => {
@@ -77,19 +78,18 @@ function updateEvent(req, res) {
 
 function rsvpToEvent(req, res) {
   const eventId = req.params.id;
-  let userId = req.user.id
-  Event.findById({_id: eventId}, (err, event) => {
-        if(err) {
-          res.status(404).send(err);
-        } else {
-          let newEvent = event;
-          newEvent.rsvp.push(userId);
-          Object.assign(event, newEvent).save((err, event) => {
-              if(err) res.send(err);
-              res.send({ message: 'Updated!', event });
-          });
-        }
-    });
+  const userId = req.user.id
+  let newRegistration = new Reservation()
+  newRegistration.user_id = userId
+  newRegistration.event_id = eventId
+
+  newRegistration.save((err, registration)=> {
+    if (err) {
+      res.status(400).send(err)
+    }else{
+      res.status(200).send("RSVP succeed!")
+    }
+  })
 }
 
 function deleteEvent(req,res) {
@@ -118,5 +118,5 @@ function checkAuthorized(req, res, next) {
   });
 }
 
-module.exports = { getAllEvents, getAllEventsByUser, getOneEventById, getOneEventByTitle, 
+module.exports = { getAllEvents, getAllEventsByUser, getOneEventById, getOneEventByTitle,
   createEvent, updateEvent, rsvpToEvent, deleteEvent, checkAuthorized }

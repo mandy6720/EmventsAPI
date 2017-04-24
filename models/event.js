@@ -7,8 +7,7 @@ let EventSchema = new Schema(
     title: {type: String, required: true, index: true},
     description: {type: String, required: true},
     date: {type: Date, required: true, default: Date.now },
-    created_by: {type: String},
-    rsvp: {type: Array}
+    created_by: {type: String}
   }
 )
 
