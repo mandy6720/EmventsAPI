@@ -22,9 +22,16 @@ function getEventReservationsId(req, res) {
     if (err) {
       res.status(404).send(err);
     } else {
-      res.status(200).send(result);
+      let userIdArr = result.map(item => item.user_id);
+      User.find({_id: userIdArr}, 'username email_address full_name', (err, users) => {
+        if (err) {
+          res.status(404).send(err);
+        } else {
+          res.status(200).send(users)
+        }
+      });
     }
-  })
+  });
 }
 
 function getAllEventsRegistedByUser(req, res) {
