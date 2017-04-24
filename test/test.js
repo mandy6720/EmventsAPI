@@ -28,7 +28,7 @@ describe("This is CRUD of Events", () => {
   });
 
   describe("sends error if no username/password", () => {
-    it("returns 401 Error", (done) => { 
+    it("returns 401 Error", (done) => {
       User.remove({}, (err) => {
         chai.request(server)
           .get('/events')
@@ -57,7 +57,7 @@ describe("This is CRUD of Events", () => {
 
   });
 
-  
+
 
   // Test /GET by id
   describe("GET /events/:id", () => {
@@ -150,7 +150,8 @@ describe("This is CRUD of Events", () => {
       let newEvent = new Event({
         title: 'test event',
         description: 'test',
-        date: new Date()
+        date: new Date(),
+        created_by: user.id
       })
       let newTitle = "test event updated"
       let newDescription = "new description"
@@ -177,17 +178,16 @@ describe("This is CRUD of Events", () => {
     it("update a unexisting event", (done) => {
       user.save((err, user) => {});
       let newEvent = {
-        id: 100,
         title: 'test event',
         description: 'test',
         date: '03262017'
       };
       chai.request(server)
-        .put('/events/7')
+        .put('/events/100')
         .auth(user.username, user.password)
         .send(newEvent)
         .end((err, res) => {
-          res.should.have.status(404)
+          res.should.have.status(400)
           done()
         })
     });
@@ -200,7 +200,8 @@ describe("This is CRUD of Events", () => {
       let newEvent = new Event({
         title: 'test event',
         description: 'test',
-        date: new Date()
+        date: new Date(),
+        created_by: user.id
       })
       newEvent.save((err, event) => {
         chai.request(server)
@@ -225,7 +226,7 @@ describe("This is CRUD of Events", () => {
         .delete('/events/26')
         .auth(user.username, user.password)
         .end((err, res) => {
-          res.should.have.status(404);
+          res.should.have.status(400);
           done()
         })
     });

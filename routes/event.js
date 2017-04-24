@@ -110,7 +110,9 @@ function checkAuthorized(req, res, next) {
 
   Event.findOne({_id: eventId}, (err, event)=> {
     if (err) res.status(400)
-    if (event.created_by == userId) {
+    if (typeof event == 'undefined') {
+      res.status(400).send("Not found")
+    }else if (event.created_by == userId) {
       next()
     }else{
       res.status(401).send("Unauthorized")
