@@ -15,6 +15,18 @@ function getAllUsers(req, res) {
   });
 }
 
+function getEventReservationsId(req, res) {
+  let eventId = req.params.id;
+
+  Reservation.find(({event_id: eventId}), (err, result) => {
+    if (err) {
+      res.status(404).send(err);
+    } else {
+      res.status(200).send(result);
+    }
+  })
+}
+
 function getAllEventsRegistedByUser(req, res) {
   let userId = req.params.userId
 
@@ -36,4 +48,4 @@ function getAllEventsRegistedByUser(req, res) {
 
 }
 
-module.exports = { getAllUsers, getAllEventsRegistedByUser };
+module.exports = { getAllUsers, getAllEventsRegistedByUser, getEventReservationsId };

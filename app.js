@@ -63,6 +63,11 @@ app.get('/events/:id',
 passport.authenticate('basic', { session: false }),
 EventRoute.getOneEventById);
 
+app.get('/events/:id/reservations',
+passport.authenticate('basic', { session: false }),
+EventRoute.checkAuthorized,
+UserRoute.getEventReservationsId);
+
 app.post('/events',
 passport.authenticate('basic', { session: false }),
 EventRoute.createEvent);
