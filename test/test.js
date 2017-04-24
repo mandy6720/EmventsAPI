@@ -8,6 +8,7 @@ let should = chai.should();
 let mongoose = require("mongoose");
 let Event = require('../models/event');
 let User = require('../models/user.js');
+let Reservation = require('../models/reservation');
 
 
 chai.use(chaiHttp);
@@ -232,4 +233,60 @@ describe("This is CRUD of Events", () => {
     });
   });
 
+  describe("RSVP to /events/:id", () => {
+
+    it("rsvp a event", (done) => {
+      user.save((err, user) => {});
+
+      let newEvent = new Event({
+        title: 'test event',
+        description: 'test',
+        date: new Date(),
+        created_by: user.id
+      })
+
+      newEvent.save((err, event)=> {
+        chai.request(server)
+          .post('/events/'+event.id+'/rsvp')
+          .auth(user.username, user.password)
+          .end((err, res) => {
+              res.should.have.status(200);
+              res.body.should.be.a('object');
+              res.body.should.have.property('message').eql('RSVP succeed!');
+            done();
+          });
+      })
+    });
+  });
+
+  describe("Get all reservations for organizer", () => {
+    it("get all reservations", (done) => {
+      user.save((err, user) => {});
+
+      let newEvent = new Event({
+        title: 'test event',
+        description: 'test',
+        date: new Date(),
+        created_by: user.id
+      })
+
+      newEvent.save((err, event) => {
+        let newRegistration = new Reservation()
+        newRegistration.user_id = user.id
+        newRegistration.event_id = event.id
+
+        newRegistration.save((err, registration)=> {
+          chai.request(server)
+          .get("/events/"+event.id+"/reservations")
+          .auth(user.username, user.password)
+          .end((err, res) => {
+              res.should.have.status(200);
+              res.body.should.be.a('array');
+              res.body.length.should.be.eql(1);
+            done();
+          });
+        })
+      })
+    })
+  })
 });
