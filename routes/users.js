@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Event = require('../models/event');
 const User = require('../models/user');
-const EventUser = require('../models/event_user');
+const Reservation = require('../models/reservation');
 const moment = require('moment')
 
 function getAllUsers(req, res) {
@@ -18,7 +18,7 @@ function getAllUsers(req, res) {
 function getAllEventsRegistedByUser(req, res) {
   let userId = req.params.userId
 
-  EventUser.find(({user_id: userId}), (err, result) => {
+  Reservation.find(({user_id: userId}), (err, result) => {
     if (err) {
       res.status(400).send(err)
     }else{

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Event = require('../models/event');
 const User = require('../models/user');
-const EventUser = require('../models/event_user')
+const Reservation = require('../models/reservation')
 
 function getAllEvents(req, res) {
   Event.find({}, (err, events) => {
@@ -79,7 +79,7 @@ function updateEvent(req, res) {
 function rsvpToEvent(req, res) {
   const eventId = req.params.id;
   const userId = req.user.id
-  let newRegistration = new EventUser()
+  let newRegistration = new Reservation()
   newRegistration.user_id = userId
   newRegistration.event_id = eventId
 
