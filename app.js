@@ -2,7 +2,9 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
-const EventRoute = require('./routes/event')
+var acl = require('acl')
+const EventRoute = require('./routes/event');
+const UserRoute = require('./routes/users');
 const config = require('config')
 const passport = require('passport')
 const Strategy = require('passport-http').BasicStrategy
@@ -15,6 +17,12 @@ const url = config.DBHost;
 mongoose.connect(url)
 let db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error'))
+
+db.on('connected', function(error){
+    if (error) throw error;
+    //you must set up the db when mongoose is connected or your will not be able to write any document into it
+    acl = new acl(new acl.mongodbBackend(mongoose.connection.db, 'acl_'));
+});
 
 // Middleware
 app.use(bodyParser.json()); // for parsing application/json
@@ -43,6 +51,10 @@ app.get('/events',
 passport.authenticate('basic', { session: false }),
 EventRoute.getAllEvents);
 
+app.get('/events/user/:userId',
+passport.authenticate('basic', { session: false }),
+EventRoute.getAllEventsByUser);
+
 app.get('/events/search',
 passport.authenticate('basic', { session: false }),
 EventRoute.getOneEventByTitle);
@@ -51,17 +63,40 @@ app.get('/events/:id',
 passport.authenticate('basic', { session: false }),
 EventRoute.getOneEventById);
 
+app.get('/events/:id/reservations',
+passport.authenticate('basic', { session: false }),
+EventRoute.checkAuthorized,
+UserRoute.getEventReservationsId);
+
 app.post('/events',
 passport.authenticate('basic', { session: false }),
 EventRoute.createEvent);
 
 app.put('/events/:id',
 passport.authenticate('basic', { session: false }),
-EventRoute.updateEvent)
+EventRoute.checkAuthorized,
+EventRoute.updateEvent);
+
+app.post('/events/:id/rsvp',
+passport.authenticate('basic', { session: false }),
+EventRoute.rsvpToEvent);
 
 app.delete("/events/:id",
 passport.authenticate('basic', { session: false }),
-EventRoute.deleteEvent)
+EventRoute.checkAuthorized,
+EventRoute.deleteEvent);
+
+// User routes
+
+//returns all the upcoming events a user has signed up for
+app.get('/users/:userId/events',
+passport.authenticate('basic', { session: false }),
+UserRoute.getAllEventsRegistedByUser);
+
+//return all users
+app.get('/users/events',
+passport.authenticate('basic', { session: false }),
+UserRoute.getAllUsers);
 
 app.listen(3010, () => {
   console.log('Example app listening on port 3010!')

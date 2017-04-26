@@ -18,9 +18,11 @@
   },
   "homepage": "https://github.com/nucauthu/EmventsAPI#readme",
   "dependencies": {
+    "acl": "^0.4.10",
     "body-parser": "^1.17.1",
     "config": "^1.25.1",
     "express": "^4.15.2",
+    "moment": "^2.18.1",
     "mongodb": "^2.2.25",
     "mongoose": "^4.9.3",
     "nodemon": "^1.11.0",
